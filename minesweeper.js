@@ -1,20 +1,39 @@
 document.addEventListener('DOMContentLoaded', startGame)
 
 
-//Feels wrong just hard coding this
-var board = {
-  cells : [
-    {row:0,col:0,isMine:false,isMarked:false,hidden:true},
-    {row:0,col:1,isMine:false,isMarked:false,hidden:true},
-    {row:0,col:2,isMine:false,isMarked:false,hidden:true},
-    {row:1,col:0,isMine:true,isMarked:false,hidden:true},
-    {row:1,col:1,isMine:true,isMarked:false,hidden:true},
-    {row:1,col:2,isMine:true,isMarked:false,hidden:true},
-    {row:2,col:0,isMine:true,isMarked:false,hidden:true},
-    {row:2,col:1,isMine:false,isMarked:false,hidden:true},
-    {row:2,col:2,isMine:true,isMarked:false,hidden:true}
-  ]
+
+class gameBoard{
+  constructor(size){
+    
+    if(size > 9){
+      size = 9;
+    }
+    if(size < 2){
+      size = 2;
+    }
+
+    this.cells = [];
+    var numRows = size;
+    var numCols = size;
+
+    
+    for(var row = 0; row<numRows; row++){
+      for(var col = 0; col<numCols; col++){
+        var theCellIndex = (row*numCols + col);
+        this.cells[theCellIndex] = {};
+        this.cells[theCellIndex].row = row;
+        this.cells[theCellIndex].col = col;
+        this.cells[theCellIndex].isMine = true; //currently so no imediate win
+        //this.cells[theCellIndex].isMine = false;
+        this.cells[theCellIndex].isMarked = false;
+        this.cells[theCellIndex].hidden = true;
+        this.cells[theCellIndex].surroundingMines = 0;
+      }
+    }
+  }
 }
+
+var board = new gameBoard(4);
 
 
 
