@@ -62,6 +62,14 @@ function startGame () {
   document.addEventListener("click",checkForWin);
   document.addEventListener("contextmenu",checkForWin);
 
+  
+  //use notes because to lazy to alter index.html
+  document.getElementById("notes").innerHTML = "<button id='restart'>Restart?</button>";
+  document.getElementById("notes").innerHTML += "<span>Mines Left</span><span id='mineCount'></span>";
+  document.getElementById("restart").addEventListener("click",restartgame);
+  
+  document.getElementById("mineCount").innerHTML = "?";
+
   lib.initBoard();
 }
 
@@ -96,6 +104,19 @@ function checkForWin () {
     // detected that they've won, that is!)
     lib.displayMessage('You win!');
   }
+}
+
+
+
+function restartgame(){
+  board = new gameBoard(boardSize);
+  document.getElementsByClassName("board")[0].innerHTML = "";
+  
+  for(var cellIndex in board.cells){
+    board.cells[cellIndex].surroundingMines = countSurroundingMines(board.cells[cellIndex]);
+  }
+
+  lib.initBoard();
 }
 
 
