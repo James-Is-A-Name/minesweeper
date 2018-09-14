@@ -15,7 +15,7 @@ class gameBoard{
     this.cells = [];
     var numRows = size;
     var numCols = size;
-
+    var numMines = Math.floor(size*size/4);
     
     for(var row = 0; row<numRows; row++){
       for(var col = 0; col<numCols; col++){
@@ -23,17 +23,31 @@ class gameBoard{
         this.cells[theCellIndex] = {};
         this.cells[theCellIndex].row = row;
         this.cells[theCellIndex].col = col;
-        this.cells[theCellIndex].isMine = true; //currently so no imediate win
-        //this.cells[theCellIndex].isMine = false;
+        this.cells[theCellIndex].isMine = false;
         this.cells[theCellIndex].isMarked = false;
         this.cells[theCellIndex].hidden = true;
         this.cells[theCellIndex].surroundingMines = 0;
       }
     }
+
+    for(var cellIndex = 0; cellIndex < numMines; cellIndex++){
+      this.cells[cellIndex].isMine = true;
+    }
+    
+    for(var cellIndex = 0; cellIndex < this.cells.length; cellIndex++){
+      var swapTarget = Math.floor(Math.random() * (this.cells.length - cellIndex));
+
+      if(cellIndex !== swapTarget){
+        var tempMineValue = this.cells[cellIndex].isMine;
+        this.cells[cellIndex].isMine = this.cells[swapTarget].isMine;
+        this.cells[swapTarget].isMine = tempMineValue;
+      }
+    }
   }
 }
 
-var board = new gameBoard(4);
+var boardSize = 6;
+var board = new gameBoard(boardSize);
 
 
 
@@ -48,7 +62,7 @@ function startGame () {
   document.addEventListener("click",checkForWin);
   document.addEventListener("contextmenu",checkForWin);
 
-  lib.initBoard()
+  lib.initBoard();
 }
 
 // Define this function to look for a win condition:
@@ -58,24 +72,32 @@ function startGame () {
 function checkForWin () {
 
   var minesCounted = 0;
-  var minesFound = 0;
+  var minesMarked = 0;
+  var wrongMark = false;
   for(var cellIndex in board.cells){
     //check if a Mine
     if(board.cells[cellIndex].isMine){
       minesCounted++;
       //check if correctly marked as mine
       if(board.cells[cellIndex].isMarked){
-        minesFound++;
+        minesMarked++;
       }
+    }
+    else if(board.cells[cellIndex].isMarked){
+      minesMarked++;
+      wrongMark = true;
     }
   }
 
-  if (minesCounted === minesFound){
+  document.getElementById("mineCount").innerHTML = (minesCounted - minesMarked);
+
+  if ((minesCounted === minesMarked) && !wrongMark){
     // You can use this function call to declare a winner (once you've
     // detected that they've won, that is!)
     lib.displayMessage('You win!');
   }
 }
+
 
 // Define this function to count the number of mines around the cell
 // (there could be as many as 8). You don't have to get the surrounding
@@ -95,7 +117,7 @@ function countSurroundingMines (cell) {
       mineCount++;
     }
   }
-
-  return mineCount = 0;
+  
+  return mineCount;
 }
 
